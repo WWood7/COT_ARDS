@@ -131,10 +131,8 @@ def GetData4Patient(DataArray, eventDateTime, iscase):
         # RX: this filters out alarm after code blue, since duration will
         # be negative
         iTime = np.where(dt >= 0)
-        # print(iTime)
         if len(iTime) != 0:
             aAlarmArray = DataArray.iloc[iTime].reset_index(drop=True)
-            # print(aAlarmArray)
             t = aAlarmArray['datacharttime']
             # RX: this is important, the duration here is the duration from
             # the first data in timeline, not duration from code blue!!
@@ -257,6 +255,65 @@ def GetTokenArray4Patient(generate_path, patientDataArray, RelativeDTofEvent, Pa
 
     evaltime_list = np.sort(list(set(t)))
     print("Eval time list length: %d" % len(evaltime_list))
+    # process the static demo tokens first
+    demo_list = []
+    for demoid in patientDataArray['dataid'][
+        (patientDataArray['dataid'] >= 300000) & (patientDataArray['dataid'] < 400000)].unique():
+        subonedemo = patientDataArray[patientDataArray['dataid'] == demoid].reset_index(drop=True).iloc[-1]
+        if demoid == 300001:
+            age = subonedemo['datavalue']
+            if age >= 18 and age < 45:
+                demo_list.extend([300010])
+            elif age >= 45 and age < 65:
+                demo_list.extend([300011])
+            else:
+                demo_list.extend([300012])
+        elif demoid == 300002:
+            gender = subonedemo['datavalue']
+            if gender == 'F':
+                demo_list.extend([300020])
+            else:
+                demo_list.extend([300021])
+        elif demoid == 300003:
+            ethnicity = subonedemo['datavalue']
+            if ethnicity == 'WHITE':
+                demo_list.extend([300030])
+            elif ethnicity == 'BLACK':
+                demo_list.extend([300031])
+            elif ethnicity == 'ASIAN':
+                demo_list.extend([300032])
+            elif ethnicity == 'HISPANIC':
+                demo_list.extend([300033])
+            else:
+                demo_list.extend([300034])
+        elif demoid == 300004:
+            height = subonedemo['datavalue']
+            if height < 150:
+                demo_list.extend([300040])
+            elif height >= 150 and height < 160:
+                demo_list.extend([300041])
+            elif height >= 160 and height < 170:
+                demo_list.extend([300042])
+            elif height >= 170 and height < 180:
+                demo_list.extend([300043])
+            elif height >= 180 and height < 190:
+                demo_list.extend([300044])
+            else:
+                demo_list.extend([300045])
+        else:
+            BMI = subonedemo['datavalue']
+            if BMI < 18.5:
+                demo_list.extend([300050])
+            elif BMI >= 18.5 and BMI < 25:
+                demo_list.extend([300051])
+            elif BMI >= 25 and BMI < 30:
+                demo_list.extend([300052])
+            elif BMI >= 30 and BMI < 35:
+                demo_list.extend([300053])
+            else:
+                demo_list.extend([300054])
+
+    # process all the other tokens and add demo tokens into the lists
     for evaltime in evaltime_list:
         print("Eval time: %s" % evaltime)
         idx_vital = np.where(((evaltime - t) >= 0) & ((evaltime - t) <= prediction_window))
@@ -361,62 +418,8 @@ def GetTokenArray4Patient(generate_path, patientDataArray, RelativeDTofEvent, Pa
             tokentime_list.extend([evaltime])
         print("Before for demo tokens")
         # for demo tokens
-        for demoid in patientDataArray['dataid'][
-            (patientDataArray['dataid'] >= 300000) & (patientDataArray['dataid'] < 400000)].unique():
-            subonedemo = patientDataArray[patientDataArray['dataid'] == demoid].reset_index(drop=True).iloc[-1]
-            if demoid == 300001:
-                age = subonedemo['datavalue']
-                if age >= 18 and age < 45:
-                    token_list.extend([300010])
-                elif age >= 45 and age < 65:
-                    token_list.extend([300011])
-                else:
-                    token_list.extend([300012])
-            elif demoid == 300002:
-                gender = subonedemo['datavalue']
-                if gender == 'F':
-                    token_list.extend([300020])
-                else:
-                    token_list.extend([300021])
-            elif demoid == 300003:
-                ethnicity = subonedemo['datavalue']
-                if ethnicity == 'WHITE':
-                    token_list.extend([300030])
-                elif ethnicity == 'BLACK':
-                    token_list.extend([300031])
-                elif ethnicity == 'ASIAN':
-                    token_list.extend([300032])
-                elif ethnicity == 'HISPANIC':
-                    token_list.extend([300033])
-                else:
-                    token_list.extend([300034])
-            elif demoid == 300004:
-                height = subonedemo['datavalue']
-                if height < 150:
-                    token_list.extend([300040])
-                elif height >= 150 and height < 160:
-                    token_list.extend([300041])
-                elif height >= 160 and height < 170:
-                    token_list.extend([300042])
-                elif height >= 170 and height < 180:
-                    token_list.extend([300043])
-                elif height >= 180 and height < 190:
-                    token_list.extend([300044])
-                else:
-                    token_list.extend([300045])
-            else:
-                BMI = subonedemo['datavalue']
-                if BMI < 18.5:
-                    token_list.extend([300050])
-                elif BMI >= 18.5 and BMI < 25:
-                    token_list.extend([300051])
-                elif BMI >= 25 and BMI < 30:
-                    token_list.extend([300052])
-                elif BMI >= 30 and BMI < 35:
-                    token_list.extend([300053])
-                else:
-                    token_list.extend([300054])
-            tokentime_list.extend([evaltime])
+        token_list.extend(demo_list)
+        tokentime_list.extend([evaltime for token in demo_list])
 
         if len(token_list) != 0:
             TokenArray[evaltime] = token_list

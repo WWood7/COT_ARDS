@@ -10,8 +10,8 @@ vent_len = 2
 prediction_window = 12
 delta_value_list = [0.05, 0.1, 0.3, 0.5, 1, 2, 3]
 vital_list = ['heartrate', 'sysbp', 'meanbp', 'spo2', 'tempc', 'resprate']
-generate_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/'
-data_path = '/Users/winnwu/projects/emory-hu lab/COT_project/data/'
+generate_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
+data_path = '/Users/winnwu/projects/Hu_Lab/COT_project/data/'
 
 # read in the segments
 train_case_seg = pd.read_csv(generate_path + 'segments/train_case_segs.csv').reset_index(drop=True).loc[0:3]
