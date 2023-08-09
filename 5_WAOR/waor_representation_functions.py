@@ -109,9 +109,9 @@ def WAOR_fuc(centerTimeinMins, alpha, beta, iscontrol, onecase_hitstruct_hitarra
         fea_GWAOR = np.zeros((len(idxofTriggerSamples), onecase_hitstruct_hitarray.shape[0]))
         for i in range(len(idxofTriggerSamples)):
             k = idxofTriggerSamples[i]
-            fea_GWAOR[i] = weightingFuncGWAOR(onecase_hitstruct_hitarray[:, :k],
+            fea_GWAOR[i] = weightingFuncGWAOR(onecase_hitstruct_hitarray[:, :k+1],
                                               onecase_hitstruct_hitt[k] - onecase_hitstruct_hitt[
-                                                                          :k], alpha, beta)
+                                                                          :k+1], alpha, beta)
         if iscontrol == 1:
             temp_WAOR = np.hstack((fea_GWAOR, np.zeros((len(idxofTriggerSamples), 1)),
                                    np.ones((len(idxofTriggerSamples), 1)) * patid))
@@ -201,7 +201,6 @@ def get_params_cv(combination_idex_list, FPR_max, combination, generate_path):
 
         scoring = {'AUC': 'roc_auc', 'Accuracy': 'accuracy', 'TPR': 'recall'}
 
-        # load the data
         # get the scores
         clf = LogisticRegression()
         scores = cross_validate(clf, normalized_train_X, train_y, scoring=scoring, cv=combined_splits)

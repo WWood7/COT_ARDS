@@ -55,7 +55,7 @@ def sampleTriggers(onecase_hitstruct_hitarray, IsUniformDraw, NumTrigCon, CaseOv
         if IsUniformDraw == 1:
             idx = np.random.permutation(numofTriggers)
             if numofTriggers <= numofDraws:
-                idxofSamples = random.choices(idxofTriggers, k=numofDraws)
+                idxofSamples = idxofTriggers
             else:
                 # draw numofDraws samples from idxofTriggers randomly
                 idxofSamples = idxofTriggers[idx[:numofDraws]]
@@ -107,9 +107,9 @@ def WAOR_fuc(centerTimeinMins, alpha, beta, iscontrol, onecase_hitstruct_hitarra
         fea_GWAOR = np.zeros((len(idxofTriggerSamples), onecase_hitstruct_hitarray.shape[0]))
         for i in range(len(idxofTriggerSamples)):
             k = idxofTriggerSamples[i]
-            fea_GWAOR[i] = weightingFuncGWAOR(onecase_hitstruct_hitarray[:, :k],
+            fea_GWAOR[i] = weightingFuncGWAOR(onecase_hitstruct_hitarray[:, :k+1],
                                               onecase_hitstruct_hitt[k] - onecase_hitstruct_hitt[
-                                                                          :k], alpha, beta)
+                                                                          :k+1], alpha, beta)
         if iscontrol == 1:
             temp_WAOR = np.hstack((fea_GWAOR, np.zeros((len(idxofTriggerSamples), 1)),
                                    np.ones((len(idxofTriggerSamples), 1)) * patid))
@@ -124,7 +124,7 @@ def WAOR_pool(patient_list, trainortest, caseorcontrol, hitstruct, toolbox_input
               CaseOverSamRatio, combination, FPR_max, file_path, iscontrol):
     # combination: combinations of parameters [0]cneterTimeinMins [1]alpha [2]beta
 
-    for comb_idx in range(10):
+    for comb_idx in range(1):
         print(comb_idx)
         case_trainData_allFea_GWAOR = {}
         comb = combination[comb_idx]
@@ -200,7 +200,7 @@ def get_params_cv(combination_idex_list, FPR_max, combination, generate_path):
 
         # load the data
         # get the scores
-        clf = RandomForestClassifier()
+        clf = LogisticRegression()
         scores = cross_validate(clf, normalized_train_X, train_y, scoring=scoring, cv=combined_splits)
         auc_list.append(scores['test_AUC'].mean())
         acc_list.append(scores['test_Accuracy'].mean())
