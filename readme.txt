@@ -40,7 +40,62 @@ This module is aimed at getting COT/SuperAlarm patterns using mafia algorithm, w
 
 
 
-4. WAOR_representation
+4. Hitarray
+This module is for generating hit arrays for temporal related analysis. An hit array for one patient is a matrix indicating the trigger situations of the COT/SuperAlarm patterns, each row will be a certain pattern, and each column is a binary-valued pattern vector at a certain timestamp. 
+After running this module, there will be 4 kinds of files generated in the /generate/tokenarray folder.
+a. group_name_TokenArray_dict.npy
+b. group_name_TokenTimeArray_dict.npy
+c. group_name_Hitarray_dict_FPRmax_sparse.npy
+d. group_name_toolbox_input_FPRmax_sparse.npy
+See the following description of these files. All the relative durations are in hours.
+
+
+
+group_name_TokenArray_dict.npy
+
+A recommended way to load these files is use:
+variable_name = np.load(file_name, allow_pickle=True).item()
+In this way, the variable acquired will be a nested dictionaries. 
+For the outer part, each key represents one patient’s icu_stay id, and the corresponding value is an inner dictionary that contains triggered tokens and timestamps. In an inner dictionary, each key is the duration from the first timestamp to the current timestamp, each value is a list of token ids indicating tokens that are in the state of triggered (note that not all the triggered tokens are necessarily triggered at this time point, some could be 	triggered earlier and then last).
+
+
+
+
+group_name_TokenTimeArray_dict.npy
+
+A recommended way to load these files is use:
+variable_name = np.load(file_name, allow_pickle=True).item()
+n this way, the variable acquired will be a nested dictionaries. 
+
+For the outer part, each key represents one patient’s icu_stay id, and the corresponding value is an inner dictionary that contains tokens’ triggering time and timestamps. In an inner dictionary, each key is the duration from the first timestamp to the current timestamp, each value is a list of duration indicating the actual relative timestamp of a token being triggered. Together with group_name_TokenArray_dict.npy, one can see the exact timestamp of each token being triggered.
+
+
+
+
+group_name_Hitarray_dict_FPRmax_sparse.npy
+
+A recommended way to load these files is use:
+variable_name = np.load(file_name, allow_pickle=True).item()
+In this way, the variable acquired will be nested dictionaries. 
+
+For the outer part, each key represents one patient’s icu_stay id, and the corresponding value is an inner dictionary that contains hit arrays and timestamps. In an inner dictionary, there are two keys ‘sparseHitArray’ and ‘HitT’. The value of ‘sparseHitArray’ is a sparse 0-1 matrix, each row is a COT or SuperAlarm pattern, each column represents a timestamp, and each element represents if a pattern is triggered at a timestamp. The value of ‘HitT’ is a list of relative timestamps, each element is the duration between the first stamp and the current stamp. The length of the timestamp list is equal to # of columns in the sparse matrix.
+
+
+
+
+group_name_toolbox_input_FPRmax_sparse.npy
+
+A recommended way to load these files is use:
+variable_name = np.load(file_name, allow_pickle=True)
+In this way, the variable acquired will be ndarrays with 3 columns. 
+
+The first column contains icu_stay ids, the second contains timestamps, the third contains indicators representing if ANY COT or SuperAlarm patterns are triggered at that time point. Here the timestamps are relative duration from the current stamp to the last stamp, to be differentiate with timestamps in other files.
+
+
+
+5. WAOR
+This module is for using another way to represent the pattern vectors in hit arrays, termed as Weighted Average Occurrence Representation. Then use the new vectors to train classifiers.
+
 
 
 

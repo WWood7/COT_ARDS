@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix, vstack, save_npz, load_npz
 from scipy.stats import gamma
-from sklearn.preprocessing import normalize, MinMaxScaler
+from sklearn.preprocessing import normalize
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_validate, GroupKFold
@@ -55,7 +55,7 @@ def sampleTriggers(onecase_hitstruct_hitarray, IsUniformDraw, NumTrigCon, CaseOv
         if IsUniformDraw == 1:
             idx = np.random.permutation(numofTriggers)
             if numofTriggers <= numofDraws:
-                idxofSamples = idxofTriggers
+                idxofSamples = random.choices(idxofTriggers, k=numofDraws)
             else:
                 # draw numofDraws samples from idxofTriggers randomly
                 idxofSamples = idxofTriggers[idx[:numofDraws]]
@@ -67,18 +67,16 @@ def sampleTriggers(onecase_hitstruct_hitarray, IsUniformDraw, NumTrigCon, CaseOv
             else:
                 # Obtain the desired subset of HitTIMEtoEND.
                 t = HitTIMEtoEND[idxofTriggers]
+                print('t: ', t)
 
-                # Generate exponential random variables.
-                t1 = np.random.exponential(centerTimeinMins / 60, numofDraws)
+                # evaluate the exponential distribution at t
+                pdf = np.exp(-t / (centerTimeinMins / 60)) / (centerTimeinMins / 60)
+                if sum(pdf) == 0:
+                    idxofSamples = []
 
-                # Compute absolute differences between each sample in t1 and all elements in t.
-                temp_t = np.abs(t - t1[:, None])
-
-                # Find the index in t of the closest element to each sample in t1.
-                tidx = np.argmin(temp_t, axis=1)
-
-                # Get elements from idxofTriggers at the indices specified by tidx.
-                idxofSamples = idxofTriggers[tidx]
+                else:
+                    weight = pdf / sum(pdf)
+                    idxofSamples = np.random.choice(idxofTriggers, size=numofDraws, p=weight, replace=True)
 
     else:
         idxofTriggers = np.nonzero(np.ones((1, onecase_hitstruct_hitarray.shape[0])) @ onecase_hitstruct_hitarray)[1]
@@ -126,7 +124,7 @@ def WAOR_pool(patient_list, trainortest, caseorcontrol, hitstruct, toolbox_input
               CaseOverSamRatio, combination, FPR_max, file_path, iscontrol):
     # combination: combinations of parameters [0]cneterTimeinMins [1]alpha [2]beta
 
-    for comb_idx in range(len(combination)):
+    for comb_idx in range(10):
         print(comb_idx)
         case_trainData_allFea_GWAOR = {}
         comb = combination[comb_idx]
@@ -150,10 +148,10 @@ def WAOR_pool(patient_list, trainortest, caseorcontrol, hitstruct, toolbox_input
 
         if comb_idx in case_trainData_allFea_GWAOR.keys():
             case_TrainData_GWAOR = csr_matrix(np.concatenate(case_trainData_allFea_GWAOR[comb_idx]))
-            if not os.path.exists(file_path + 'WAOR_files'):
-                os.makedirs(file_path + 'WAOR_files')
+            if not os.path.exists(file_path + 'WAOR_files_another'):
+                os.makedirs(file_path + 'WAOR_files_another')
             save_npz(
-                file_path + 'WAOR_files/' + caseorcontrol + '_' + trainortest + 'Data_allFea_GWAOR_' + str(
+                file_path + 'WAOR_files_another/' + caseorcontrol + '_' + trainortest + 'Data_allFea_GWAOR_' + str(
                     FPR_max) + '_sparse_comb_' + str(comb_idx) + '.npz',
                 case_TrainData_GWAOR)
 
@@ -169,19 +167,18 @@ def get_params_cv(combination_idex_list, FPR_max, combination, generate_path):
 
         # load data
         train_case_data = (
-            load_npz(generate_path + 'WAOR_files/case_trainData_allFea_GWAOR_' + str(FPR_max) +
+            load_npz(generate_path + 'WAOR_files_another/case_trainData_allFea_GWAOR_' + str(FPR_max) +
                      '_sparse_comb_' + str(combination_idex) + '.npz').
             toarray())
         train_control_data = (
-            load_npz(generate_path + 'WAOR_files/control_trainData_allFea_GWAOR_' + str(FPR_max) +
+            load_npz(generate_path + 'WAOR_files_another/control_trainData_allFea_GWAOR_' + str(FPR_max) +
                      '_sparse_comb_' + str(combination_idex) + '.npz').
             toarray())
         train_data = np.concatenate((train_case_data, train_control_data))
 
         # normalize data
         train_X = train_data[:, :-2]
-        scaler = MinMaxScaler()
-        normalized_train_X = scaler.fit_transform(train_X)
+        normalized_train_X = normalize(train_X, axis=0, norm='max')
         train_y = train_data[:, -2]
 
         # define a spliter for cross validation
@@ -199,19 +196,16 @@ def get_params_cv(combination_idex_list, FPR_max, combination, generate_path):
             val_idx = np.concatenate([indices_0[val_idx_0], indices_1[val_idx_1]])
             combined_splits.append((train_idx, val_idx))
 
-        scoring = {'AUC': 'roc_auc', 'Accuracy': 'accuracy', 'TPR': 'recall'}
+        scoring = {'AUC': 'roc_auc', 'Accuracy': 'accuracy'}
 
         # load the data
         # get the scores
-        clf = LogisticRegression()
+        clf = RandomForestClassifier()
         scores = cross_validate(clf, normalized_train_X, train_y, scoring=scoring, cv=combined_splits)
         auc_list.append(scores['test_AUC'].mean())
         acc_list.append(scores['test_Accuracy'].mean())
         print(scores['test_Accuracy'].mean())
         print(scores['test_AUC'].mean())
-        print('TPR:', scores['test_TPR'].mean())
-        print('FPR:', 1 - scores['test_Accuracy'].mean() * 2 + scores['test_TPR'].mean())
-
 
     # get the best parameters
     best_combination_idex_1 = combination_idex_list[np.argmax(auc_list)]
@@ -221,8 +215,6 @@ def get_params_cv(combination_idex_list, FPR_max, combination, generate_path):
     print('centerTimeinMins: ', combination[best_combination_idex_1][0])
     print('alpha: ', combination[best_combination_idex_1][1])
     print('beta: ', combination[best_combination_idex_1][2])
-    print(combination_idex)
-
 
 
 

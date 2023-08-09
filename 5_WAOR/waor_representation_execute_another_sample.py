@@ -1,4 +1,4 @@
-from waor_representation_functions import *
+from waor_representation_functions_another_sample import *
 from sklearn import metrics
 import pandas as pd
 import time
@@ -29,7 +29,7 @@ tokenarray_path = generate_path + 'tokenarray/'
 # print(len(combination))
 #
 # trainortest = 'train'
-# for iscontrol in [1]:
+# for iscontrol in [0, 1]:
 #     if iscontrol == 0:
 #         caseorcontrol = 'case'
 #     else:
@@ -95,7 +95,7 @@ centerTimeinMins_list = [10, 30, 50, 60, 90]
 optFea_WAOR_list = {'a': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'b': [6, 3, 2, 1.5, 1.2, 1, 6. / 7, 0.75, 6. / 9, 0.6]}
 
 combination = []
-combination_index_list = list(range(500))
+combination_index_list = list(range(10))
 for centerTimeinMins in centerTimeinMins_list:
     for alpha in optFea_WAOR_list['a']:
         for beta in optFea_WAOR_list['b']:
