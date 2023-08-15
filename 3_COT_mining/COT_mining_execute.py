@@ -1,7 +1,7 @@
 from COT_mining_functions import *
 import ast
 
-generate_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/'
+generate_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/'
 MinSup_list = [0.1, 0.15, 0.2]
 FPR_MAX_list = [0.02, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
 fold_num = 5

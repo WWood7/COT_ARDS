@@ -348,7 +348,6 @@ def parallel_zzzGetMFIfromMAFIA(szMFITxtFile, codeMatrix, patID):
     patientIDSet = {}
     # print(len(AlarmSetMFIFromMafia.keys()),'different lenth')
     for jj in AlarmSetMFIFromMafia.keys():  # iterate patterns under different length
-        tic_temp = time.time()
         itemsLen = len(AlarmSetMFIFromMafia[jj])  # there are itemsLen patterns have length jj
         aPatIDSet = {}
         # print(itemsLen)
@@ -362,8 +361,6 @@ def parallel_zzzGetMFIfromMAFIA(szMFITxtFile, codeMatrix, patID):
         for kk_idx in range(itemsLen):
             aPatIDSet[results[kk_idx][0]] = results[kk_idx][1]
         patientIDSet[jj] = aPatIDSet
-        # print(time.time()-tic_temp,'one lenth')
-    # print(time.time() - tic22, 'last half of zzz')
     return AlarmSetMFIFromMafia, patientIDSet
 
 
@@ -693,6 +690,7 @@ def GetTPRPFromOnePatternset(szOutput4Mafia, patternset, val_case_binaryCM, val_
     FP_count = []
     pattern_list_tohighlight = []
     TP4EachPattern = []
+    FP4EachPattern = []
     for pattern in patternset:
         if len(pattern) in val_case_AlarmSet.keys():
             if pattern in val_case_AlarmSet[len(pattern)]:
@@ -704,10 +702,11 @@ def GetTPRPFromOnePatternset(szOutput4Mafia, patternset, val_case_binaryCM, val_
             if pattern in val_control_AlarmSet[len(pattern)]:
                 index = val_control_AlarmSet[len(pattern)].index(pattern)
                 FP_count.extend(val_control_PatientIDSet[len(pattern)][index])
+                FP4EachPattern.append(len(val_control_PatientIDSet[len(pattern)][index]))
     # print(TP_count)
     TP = len(list(set(TP_count))) / case_pat_num
     FP = len(list(set(FP_count))) / control_pat_num
-    return TP, FP, pattern_list_tohighlight, TP4EachPattern
+    return TP, FP, pattern_list_tohighlight, TP4EachPattern, FP4EachPattern
 
 
 def GenerateOfflineResults(file_path, optimal_minsup_list, operating_point, FPR_MAX_list):
@@ -892,7 +891,7 @@ def GenerateOfflineResults_alreadyhavepatternsetversion(generate_path, FPR_MAX_l
     folder_path = generate_path + '/superalarm'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-    superalarm_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/superalarm/'
+    superalarm_path = folder_path + '/'
     for FPR_MAX_idx in range(len(FPR_MAX_list)):
         FPR_MAX = FPR_MAX_list[FPR_MAX_idx]
         print("under FPR max:", FPR_MAX)
@@ -905,7 +904,7 @@ def GenerateOfflineResults_alreadyhavepatternsetversion(generate_path, FPR_MAX_l
             contents = file.read()
         superalarmset = ast.literal_eval(contents)
         # finally, calculate the TP and FP on test case patients
-        test_TP, test_FP, pattern_list_tohighlight, TP4EachPattern = GetTPRPFromOnePatternset(
+        test_TP, test_FP, pattern_list_tohighlight, TP4EachPattern, FP4EachPattern = GetTPRPFromOnePatternset(
             finalOutput4Mafia, superalarmset, test_case_codematrix, test_control_codematrix)
         print("TP:", test_TP, "FP:", test_FP)
 
@@ -918,4 +917,9 @@ def GenerateOfflineResults_alreadyhavepatternsetversion(generate_path, FPR_MAX_l
             folder_path + '/TP4EachPattern_' + str(FPR_MAX) + '.txt',
             'w')
         file.write(str(TP4EachPattern))
+        file.close()
+        file = open(
+            folder_path + '/FP4EachPattern_' + str(FPR_MAX) + '.txt',
+            'w')
+        file.write(str(FP4EachPattern))
         file.close()
