@@ -1,6 +1,6 @@
 import pandas as pd
 
-file_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/segments/'
+file_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/segments/'
 train_case_segs = pd.read_csv(file_path + 'train_case_segs.csv')
 train_control_segs = pd.read_csv(file_path + 'train_control_segs.csv')
 test_case_segs = pd.read_csv(file_path + 'test_case_segs.csv')
