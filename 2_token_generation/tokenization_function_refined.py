@@ -863,7 +863,6 @@ def GetVentTokens(train_case_segs, test_case_segs, train_control_segs, test_cont
         print(len(test_control_vent_token_input['token_id'].unique()))
     elif vent_token_method == 'all':
         # form normal vent tokens
-        # form case lab tokens
         # train set
         print("dealing with train case vent")
         uniperIDs = train_case_vent['icustay_id'].unique()
