@@ -180,7 +180,7 @@ def GenerateOfflineResults(generate_path, FPR_MAX_list, optimal_minsup_list):
     folder_path = generate_path + '/superalarm'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-    superalarm_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/superalarm/'
+    superalarm_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/superalarm/'
     for FPR_MAX_idx in range(len(FPR_MAX_list)):
         FPR_MAX = FPR_MAX_list[FPR_MAX_idx]
         print("under FPR max:", FPR_MAX)

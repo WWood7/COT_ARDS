@@ -3,8 +3,8 @@ import numpy as np
 from sklearn import model_selection
 from tokenization_function_refined import *
 
-data_path = '/Users/winnwu/projects/emory-hu lab/COT_project/data/mimiciv/'
-generate_path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/mimiciv/'
+data_path = '/Users/winnwu/projects/Hu_lab/COT_project/data/mimiciv/'
+generate_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/mimiciv/'
 
 # #
 # # get vital tokens
@@ -45,49 +45,49 @@ control_segs = pd.read_csv(generate_path + 'segments/control_segs.csv')
 #
 # get lab tokens
 # mark abnormal high or low for lab events with abnormal flags
-Getabnomral_labs_wLH(data_path)
+# Getabnomral_labs_wLH(data_path)
 
-# get tokens
-abnormal_labs_wLH = pd.read_csv(data_path + 'abnormal_labs_wLH.csv')
-test_case_lab_token,\
-test_control_lab_token = \
-    GetLabTokens(case_segs, control_segs, abnormal_labs_wLH)
-lab_tokens_folder = generate_path + 'tokens/lab/'
-if not os.path.exists(lab_tokens_folder):
-    os.makedirs(lab_tokens_folder)
-test_case_lab_token.to_csv(lab_tokens_folder + 'test_case_lab_token_input.csv')
-test_control_lab_token.to_csv(lab_tokens_folder + 'test_control_lab_token_input.csv')
-
-
-# #
-# # get vent tokens
-# vent_method = 'intub_duration'
-# abnormal_vent = pd.read_csv(data_path + 'abnormal_vent_m_s.csv')
-# abnormal_vent = abnormal_vent.dropna(subset=["tokenid"])
-# test_case_vent_token,\
-# test_control_vent_token = \
-#     GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
-# vent_token_folder = generate_path + 'tokens/vent'
-# if not os.path.exists(vent_token_folder):
-#     os.makedirs(vent_token_folder)
-# test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
-# test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
+# # get tokens
+# abnormal_labs_wLH = pd.read_csv(data_path + 'abnormal_labs_wLH.csv')
+# test_case_lab_token,\
+# test_control_lab_token = \
+#     GetLabTokens(case_segs, control_segs, abnormal_labs_wLH)
+# lab_tokens_folder = generate_path + 'tokens/lab/'
+# if not os.path.exists(lab_tokens_folder):
+#     os.makedirs(lab_tokens_folder)
+# test_case_lab_token.to_csv(lab_tokens_folder + 'test_case_lab_token_input.csv')
+# test_control_lab_token.to_csv(lab_tokens_folder + 'test_control_lab_token_input.csv')
 
 
-# vent_method = 'all'
-# test_case_vent_token,\
-# test_control_vent_token = \
-#     GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
-# test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
-# test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
+#
+# get vent tokens
+vent_method = 'intub_duration'
+abnormal_vent = pd.read_csv(data_path + 'abnormal_vent_m_s.csv')
+abnormal_vent = abnormal_vent.dropna(subset=["tokenid"])
+test_case_vent_token,\
+test_control_vent_token = \
+    GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
+vent_token_folder = generate_path + 'tokens/vent'
+if not os.path.exists(vent_token_folder):
+    os.makedirs(vent_token_folder)
+test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
+test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
 
 
-# vent_method = 'lasttwo'
-# test_case_vent_token,\
-# test_control_vent_token = \
-#     GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
-# test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
-# test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
+vent_method = 'all'
+test_case_vent_token,\
+test_control_vent_token = \
+    GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
+test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
+test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
+
+
+vent_method = 'lasttwo'
+test_case_vent_token,\
+test_control_vent_token = \
+    GetVentTokens(case_segs, control_segs, abnormal_vent, vent_method)
+test_case_vent_token.to_csv(vent_token_folder + '/test_case_vent_' + vent_method + '_token_input.csv')
+test_control_vent_token.to_csv(vent_token_folder + '/test_control_vent_' + vent_method + '_token_input.csv')
 
 
 
