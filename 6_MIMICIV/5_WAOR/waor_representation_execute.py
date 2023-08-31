@@ -12,7 +12,7 @@ tokenarray_path = generate_path + 'tokenarray/'
 # doing test on MIMICIV
 # get WAOR for testing set
 NumTrigCon = 10
-FPR_max = 0.3  # [0.02, 0.05, 0.1, 0.15, 0.2, 0.25,0.3,0.35,0.4]
+FPR_max = 0.15  # [0.02, 0.05, 0.1, 0.15, 0.2, 0.25,0.3,0.35,0.4]
 CaseOverSamRatio = 0
 # get the combinations of the parameters
 centerTimeinMins_list = [10]

@@ -1,11 +1,11 @@
 import numpy as np
 
-tokenarray_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/tokenarray/'
+tokenarray_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/mimiciv/tokenarray/'
 for FPR_max in [0.02, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
-     test_case = np.load(tokenarray_path + 'case_test_toolbox_input_' + str(FPR_max) + '_sparse.npy',
+     test_case = np.load(tokenarray_path + 'case_toolbox_input_' + str(FPR_max) + '_sparse.npy',
                          allow_pickle=True)
 
-     test_control = np.load(tokenarray_path + 'control_test_toolbox_input_' + str(FPR_max) + '_sparse.npy',
+     test_control = np.load(tokenarray_path + 'control_toolbox_input_' + str(FPR_max) + '_sparse.npy',
                             allow_pickle=True)
      n_case = len(np.unique(test_case[:, 0]))
      n_control = len(np.unique(test_control[:, 0]))

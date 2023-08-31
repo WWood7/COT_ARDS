@@ -8,18 +8,19 @@ from scipy.stats import gamma
 def weightingFuncGWAOR(hitArray, deltaT, a, b):
     return hitArray @ gamma.pdf(deltaT, a=a, scale=1 / b)
 
-generate_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
-FPR_max = 0.3
+train_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
+test_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/mimiciv/'
+FPR_max = 0.15
 combination_idex = 0
 alpha = 1
 beta = 2
 
 train_case_data = (
-        load_npz(generate_path + 'WAOR_files/case_trainData_allFea_GWAOR_' + str(FPR_max) +
+        load_npz(train_path + 'WAOR_files/case_trainData_allFea_GWAOR_' + str(FPR_max) +
                  '_sparse_comb_' + str(combination_idex) + '.npz').
         toarray())
 train_control_data = (
-        load_npz(generate_path + 'WAOR_files/control_trainData_allFea_GWAOR_' + str(FPR_max) +
+        load_npz(train_path + 'WAOR_files/control_trainData_allFea_GWAOR_' + str(FPR_max) +
                  '_sparse_comb_' + str(combination_idex) + '.npz').
         toarray())
 train_data = np.concatenate((train_case_data, train_control_data))
@@ -44,7 +45,7 @@ reg_clf = LogisticRegression(max_iter=1000).fit(X=train_X, y=train_y)
 # test_y = test_data[:, -2]
 # print(rf_clf.score(test_X, test_y))
 
-test_case_hitarray = np.load(generate_path + 'tokenarray/case_test_HitArray_dict_' + str(FPR_max) +
+test_case_hitarray = np.load(test_path + 'tokenarray/case_HitArray_dict_' + str(FPR_max) +
                                 '_sparse.npy', allow_pickle=True).item()
 test_case_id = list(test_case_hitarray.keys())
 test_case_count_rf = 0
@@ -72,7 +73,7 @@ print('TPR_rf:', test_case_count_rf / len(test_case_id))
 print('TPR_reg:', test_case_count_reg / len(test_case_id))
 
 
-test_control_hitarray = np.load(generate_path + 'tokenarray/control_test_HitArray_dict_' + str(FPR_max) +
+test_control_hitarray = np.load(test_path + 'tokenarray/control_HitArray_dict_' + str(FPR_max) +
                                 '_sparse.npy', allow_pickle=True).item()
 test_control_id = list(test_control_hitarray.keys())
 test_control_count_reg = 0
