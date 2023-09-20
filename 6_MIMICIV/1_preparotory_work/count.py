@@ -1,6 +1,6 @@
 import pandas as pd
 
-path = '/Users/winnwu/projects/emory-hu lab/COT_project/generate/mimiciv/segments/'
+path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/mimiciv/segments/'
 
 # Read in the data
 case = pd.read_csv(path + 'case_segs.csv')
