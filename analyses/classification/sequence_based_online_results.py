@@ -10,7 +10,7 @@ def weightingFuncGWAOR(hitArray, deltaT, a, b):
 
 train_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
 test_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/mimiciv/'
-FPR_max = 0.15
+FPR_max = 0.3
 combination_idex = 0
 alpha = 1
 beta = 2
@@ -91,7 +91,8 @@ for i in test_control_id:
             rf_flag = 1
         if y_reg == 1:
             reg_flag = 1
-        if rf_flag == 1 and reg_flag == 1:
+        # if rf_flag == 1 and reg_flag == 1:
+        if rf_flag == 1:
             break
     test_control_count_rf += rf_flag
     test_control_count_reg += reg_flag
