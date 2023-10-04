@@ -7,6 +7,7 @@ FPR_max = 0.15
 max_len = 20
 test_case_num = 406
 test_control_num = 221
+
 superalarm_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/superalarm/'
 matrix_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/tokens/matrix/'
 pattern_number = 5

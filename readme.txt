@@ -36,7 +36,7 @@ Demographic information includes height, weight, race, age, gender and BMI. Thes
 
 
 3. COT_mining
-This module is aimed at getting COT/SuperAlarm patterns using mafia algorithm, which can be carried out by a MafiaCPP.exe file built by Cheng Ding and Ran Xiao. For each FPR threshold (filter out the patterns with larger FPR) considered, identify the optimal (highest TPR) minimal support of Mafia by 5-fold cross validation. The results will be generated and stored under folder generate/minsup/optimal. Optimal_minsup_list.txt records all the optimal minimal supports for each FPR threshold, and the results of the final offline analysis (TPRs and FPRs) will be printed.
+This module is aimed at getting COT/SuperAlarm patterns using mafia algorithm, which can be carried out by a MafiaCPP.exe file built by Cheng Ding and Ran Xiao. For each max FPR considered, identify the optimal (highest TPR) combination of minimal support and FPR threshold (on the validation set) by 5-fold cross validation. The results will be generated and stored under folder generate/minsup/optimal. Optimal_minsup_list.txt records all the optimal minimal supports for each FPR threshold, and the results of the final offline analysis (TPRs and FPRs) will be printed.
 
 
 
