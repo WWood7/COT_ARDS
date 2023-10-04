@@ -3,14 +3,14 @@ import pandas as pd
 import ast
 import json
 
-FPR_max = 0.02
-max_len = 100
+FPR_max = 0.15
+max_len = 10
 test_case_num = 406
 test_control_num = 221
 
 superalarm_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/superalarm/'
 matrix_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/tokens/matrix/'
-pattern_number = 10
+pattern_number = 5
 store_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/extracted_alarms/'
 
 # read in the token names
@@ -43,6 +43,7 @@ tpr = [tpr[i] for i in index]
 top_pattern_list = []
 top_source_list = []
 top_ppv_list = ppv[:pattern_number]
+top_tpr_list = tpr[:pattern_number]
 for i in range(pattern_number):
     pattern = superalarm[i]
     names = []
@@ -56,6 +57,9 @@ for i in range(pattern_number):
                 subname = (subname.replace('rr', 'repiratory_rate').replace('VE', 'minute_volume').
                            replace('PIP', 'peak_inspiratory_pressure').replace('insp_t', 'inspiratory_time')
                            .replace('fio2', 'inspired_O2_fraction'))
+                subname = (subname.replace('_H', '_High').replace('_L', '_Low').replace('age65-', 'age65+'))
+                subname = 'Male' if subname == 'M' else subname
+                subname = 'Female' if subname == 'F' else subname
             names.append(subname)
         if pattern[j] <= 78:
             sources.append('vital_signs')
@@ -72,6 +76,7 @@ for i in range(pattern_number):
 bottom_pattern_list = []
 bottom_source_list = []
 bottom_ppv_list = ppv[-pattern_number:]
+bottom_tpr_list = tpr[-pattern_number:]
 for i in range(pattern_number):
     pattern = superalarm[-i - 1]
     names = []
@@ -84,8 +89,10 @@ for i in range(pattern_number):
             if pattern[j] >= 622 and pattern[j] <= 735:
                 subname = (subname.replace('rr', 'respiratory_rate').replace('VE', 'minute_volume').
                            replace('PIP', 'peak_inspiratory_pressure').replace('insp_t', 'inspiratory_time')
-                           .replace('fio2', 'inspired_O2_fraction').replace('_H', '_High').replace('_L', '_Low').
-                           replace('age65-', 'age65+'))
+                           .replace('fio2', 'inspired_O2_fraction'))
+                subname = (subname.replace('_H', '_High').replace('_L', '_Low').replace('age65-', 'age65+'))
+                subname = 'Male' if subname == 'M' else subname
+                subname = 'Female' if subname == 'F' else subname
             names.append(subname)
         if pattern[j] <= 78:
             sources.append('vital_signs')
@@ -100,24 +107,43 @@ for i in range(pattern_number):
 
 
 # save the results as JSON
-def combine_and_save_as_json(tokens_list, source_list, filename, ppv_list):
+def combine_and_save_as_json(tokens_list, source_list, store_path, ppv_list, tpr_list, indicator):
     # 确保tokens_list和source_list长度相同
     print(len(tokens_list), len(source_list), len(ppv_list))
     assert len(tokens_list) == len(source_list), "Length of tokens_list and source_list should be same."
     assert len(tokens_list) == len(ppv_list), "Length of tokens_list and ppv_list should be same."
 
-    combined_data = []
-    for tokens, source, ppv in zip(tokens_list, source_list, ppv_list):
-        combined_data.append({
+    number = 1
+    for tokens, source, ppv, tpr in zip(tokens_list, source_list, ppv_list, tpr_list):
+        id = number + (1 - indicator) * pattern_number
+        data = [{
+            'id': id,
             "tokens": tokens,
             "source": source,
-            'ppv': ppv
-        })
+            'positive_predictive_value': ppv,
+            'sensitivity': tpr
+        }]
+        with open(store_path + 'pattern_' + str(id) + '.json', 'w', encoding='utf-8') as json_file:
+            json.dump(data, json_file, ensure_ascii=False, indent=4)
+        number += 1
 
-    with open(filename, 'w', encoding='utf-8') as json_file:
-        json.dump(combined_data, json_file, ensure_ascii=False, indent=4)
+
 
 # 使用函数保存数据
-combine_and_save_as_json(top_pattern_list, top_source_list, store_path + 'top_patterns.json', top_ppv_list)
-combine_and_save_as_json(bottom_pattern_list, bottom_source_list, store_path + 'bottom_patterns.json', bottom_ppv_list)
+combine_and_save_as_json(top_pattern_list, top_source_list, store_path,
+                         top_ppv_list, top_tpr_list, 1)
+combine_and_save_as_json(bottom_pattern_list, bottom_source_list, store_path,
+                         bottom_ppv_list, bottom_tpr_list, 0)
 
+pairs = []
+for i in range(pattern_number):
+    pairs.append({
+        'pair_id': i + 1,
+        'pattern_id': [i + 1, i + 1 + pattern_number],
+    })
+with open(store_path + 'pairs.json', 'w', encoding='utf-8') as json_file:
+    json.dump(pairs, json_file, ensure_ascii=False, indent=4)
+
+subname = "fio2_set_H"
+subname = (subname.replace('fio2', 'inspired_O2_fraction').replace('_H', '_High'))
+print(subname)
