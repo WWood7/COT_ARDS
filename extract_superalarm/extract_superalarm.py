@@ -3,14 +3,14 @@ import pandas as pd
 import ast
 import json
 
-FPR_max = 0.15
-max_len = 20
+FPR_max = 0.02
+max_len = 100
 test_case_num = 406
 test_control_num = 221
 
 superalarm_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/superalarm/'
 matrix_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/tokens/matrix/'
-pattern_number = 5
+pattern_number = 10
 store_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/extracted_alarms/'
 
 # read in the token names
@@ -54,7 +54,7 @@ for i in range(pattern_number):
         else:
             if pattern[j] >= 622 and pattern[j] <= 735:
                 subname = (subname.replace('rr', 'repiratory_rate').replace('VE', 'minute_volume').
-                           replace('PIP', 'peak_insp_pressure').replace('insp_t', 'inspiratory_time')
+                           replace('PIP', 'peak_inspiratory_pressure').replace('insp_t', 'inspiratory_time')
                            .replace('fio2', 'inspired_O2_fraction'))
             names.append(subname)
         if pattern[j] <= 78:
@@ -82,9 +82,10 @@ for i in range(pattern_number):
             names.append(subname + str(pattern[j] - 1))
         else:
             if pattern[j] >= 622 and pattern[j] <= 735:
-                subname = (subname.replace('rr', 'repiratory_rate').replace('VE', 'minute_volume').
-                           replace('PIP', 'peak_insp_pressure').replace('insp_t', 'inspiratory_time')
-                           .replace('fio2', 'inspired_O2_fraction'))
+                subname = (subname.replace('rr', 'respiratory_rate').replace('VE', 'minute_volume').
+                           replace('PIP', 'peak_inspiratory_pressure').replace('insp_t', 'inspiratory_time')
+                           .replace('fio2', 'inspired_O2_fraction').replace('_H', '_High').replace('_L', '_Low').
+                           replace('age65-', 'age65+'))
             names.append(subname)
         if pattern[j] <= 78:
             sources.append('vital_signs')
