@@ -3,18 +3,17 @@ from scipy.sparse import load_npz
 from sklearn.preprocessing import MinMaxScaler
 from scipy.stats import gamma
 import xgboost as xgb
-from sklearn.model_selection import KFold
-from sklearn.metrics import roc_auc_score
 import os
 import ast
+import itertools
 
 FPR_max = 0.15
 def weightingFuncGWAOR(hitArray, deltaT, a, b):
     return hitArray @ gamma.pdf(deltaT, a=a, scale=1 / b)
 
 generate_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
-train_path = generate_path + '/WAOR_files/'
-test_path = generate_path + '/tokenarray/'
+train_path = generate_path + 'WAOR_files/'
+test_path = generate_path + 'tokenarray/'
 # set the store path
 store_path = generate_path + 'XGB_results/mimiciii'
 if not os.path.exists(store_path):
@@ -54,6 +53,20 @@ clf.fit(train_X, train_y)
 
 
 # read in the testing data
-test_case_hitarray = np.load(test_path + 'tokenarray/case_HitArray_dict_' + str(FPR_max) +
+# case
+test_case_hitarray = np.load(test_path + 'case_test_HitArray_dict_' + str(FPR_max) +
                                 '_sparse.npy', allow_pickle=True).item()
+test_case_hitarray = dict(itertools.islice(test_case_hitarray.items(), 10))
 test_case_id = list(test_case_hitarray.keys())
+test_case_seq_toolbox_input = []
+for i in test_case_id:
+    hitarray = test_case_hitarray[i]['sparseHitArray'].todense()
+    hittime = test_case_hitarray[i]['HitT']
+    final_time = hittime[-1]
+    for j in range(hitarray.shape[1]):
+        vector = np.array(weightingFuncGWAOR(hitarray[:, :j], hittime[j] - hittime[:j], alpha, beta))
+        prob = clf.predict_proba(vector.reshape(1, -1))[0][1]
+        timestamp = final_time - hittime[j]
+        test_case_seq_toolbox_input.append([i, timestamp, prob])
+test_case_seq_toolbox_input = np.array(test_case_seq_toolbox_input)
+np.save(store_path + '/test_case_seq_toolbox_input.npy', test_case_seq_toolbox_input)
