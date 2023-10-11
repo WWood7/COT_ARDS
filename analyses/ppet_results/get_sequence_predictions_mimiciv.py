@@ -64,10 +64,13 @@ for i in test_case_id:
     hittime = test_case_hitarray[i]['HitT']
     final_time = hittime[-1]
     for j in range(hitarray.shape[1]):
-        vector = np.array(weightingFuncGWAOR(hitarray[:, :j], hittime[j] - hittime[:j], alpha, beta))
-        prob = clf.predict_proba(vector.reshape(1, -1))[0][1]
         timestamp = final_time - hittime[j]
-        test_case_seq_toolbox_input.append([i, timestamp, prob])
+        if sum(hitarray[:, j]) > 0:
+            vector = np.array(weightingFuncGWAOR(hitarray[:, :j], hittime[j] - hittime[:j], alpha, beta))
+            prob = clf.predict_proba(vector.reshape(1, -1))[0][1]
+            test_case_seq_toolbox_input.append([i, timestamp, prob])
+        else:
+            test_case_seq_toolbox_input.append([i, timestamp, 0])
 test_case_seq_toolbox_input = np.array(test_case_seq_toolbox_input)
 np.save(
     store_path + '/test_case_seq_toolbox_input' + str(FPR_max) +'.npy', test_case_seq_toolbox_input)
@@ -82,10 +85,13 @@ for i in test_control_id:
     hittime = test_control_hitarray[i]['HitT']
     final_time = hittime[-1]
     for j in range(hitarray.shape[1]):
-        vector = np.array(weightingFuncGWAOR(hitarray[:, :j], hittime[j] - hittime[:j], alpha, beta))
-        prob = clf.predict_proba(vector.reshape(1, -1))[0][1]
         timestamp = final_time - hittime[j]
-        test_control_seq_toolbox_input.append([i, timestamp, prob])
+        if sum(hitarray[:, j]) > 0:
+            vector = np.array(weightingFuncGWAOR(hitarray[:, :j], hittime[j] - hittime[:j], alpha, beta))
+            prob = clf.predict_proba(vector.reshape(1, -1))[0][1]
+            test_control_seq_toolbox_input.append([i, timestamp, prob])
+        else:
+            test_control_seq_toolbox_input.append([i, timestamp, 0])
 test_control_seq_toolbox_input = np.array(test_control_seq_toolbox_input)
 np.save(
     store_path + '/test_control_seq_toolbox_input' + str(FPR_max) +'.npy', test_control_seq_toolbox_input)
