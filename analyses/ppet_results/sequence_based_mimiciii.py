@@ -2,14 +2,14 @@ from core import scorers, Process, augmenters, utils, mews, run
 import numpy as np
 from matplotlib import pyplot as plt
 
-path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/tokenarray/'
-FPR_max = 0.15
+path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/XGB_results/mimiciii/'
+FPR_max = 0.25
 
 # read in the data
-case = np.load(path + 'case_test_toolbox_input_' + str(FPR_max) + '_sparse.npy', allow_pickle=True)
-control = np.load(path + 'control_test_toolbox_input_' + str(FPR_max) + '_sparse.npy', allow_pickle=True)
+case = np.load(path + 'test_case_seq_toolbox_input' + str(FPR_max) + '.npy', allow_pickle=True)
+control = np.load(path + 'test_control_seq_toolbox_input' + str(FPR_max) + '.npy', allow_pickle=True)
 
-thresh = [1]
+thresh = [0.5]
 case_scorers = [scorers.PosNeg(tmin=0, tmax=12)]
 augmenter = augmenters.NoAugment()
 # a class to integrate all parameters together
@@ -56,7 +56,7 @@ print(np.array([np.std(x) for x in [TPR, FPR, PPV, NPV, TNR, FNR, WDR, ACC, F1]]
 print('\n')
 
 
-thresh = [1] #define threshold or thresholds to be used
+thresh = [0.5] #define threshold or thresholds to be used
 # Define scorer for calculating false positive for case and control separately. for case it's defined as duration outside of prediction horizon, for control it's the whole duration
 case_scorers = [scorers.ProportionWarning_case(tlead=0, twin=12)] # 0h lead time and 12h prediction horizon
 control_scorers = [scorers.ProportionWarning(tmin=0, tmax=np.inf)]# whole control data
@@ -82,7 +82,7 @@ print('FAP_conbined_mean:', FAP_conbined_mean)
 
 
 # calculate FAR
-thresh = [1]#define threshold or thresholds to be used
+thresh = [0.5]#define threshold or thresholds to be used
 # Define scorer for calculating false positive for case and control separately. for case it's defined as duration outside of prediction horizon, for control it's the whole duration
 case_scorers = [scorers.HourlyFalseAlarmRate_case(tlead=0, twin=12)] # 0h lead time and 12h prediction horizon
 control_scorers = [scorers.HourlyFalseAlarmRate(tmin=0, tmax=np.inf)] # whole control data
