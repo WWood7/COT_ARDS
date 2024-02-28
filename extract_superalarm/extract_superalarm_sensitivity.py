@@ -10,8 +10,9 @@ test_control_num = 221
 
 superalarm_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/superalarm/'
 matrix_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/tokens/matrix/'
-pattern_number = 5
-store_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/extracted_alarms/'
+pattern_number = 10
+ppv_store_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/extracted_alarms/tokens_ppv/'
+sensitivity_store_path = '/Users/winnwu/projects/Hu_lab/COT_project/generate/extracted_alarms/tokens_sensitivity/'
 
 # read in the token names
 tokenid_loc = pd.read_csv(matrix_path + 'tokenid_loc.csv')
@@ -34,11 +35,14 @@ superalarm = [superalarm[i] for i in index]
 ppv = [ppv[i] for i in index]
 tpr = [tpr[i] for i in index]
 print(len(superalarm))
+
 # sort the patterns by ppv
-index = np.argsort(ppv)[::-1]
+index = np.argsort(tpr)[::-1]
 superalarm = [superalarm[i] for i in index]
 ppv = [ppv[i] for i in index]
+print(ppv)
 tpr = [tpr[i] for i in index]
+print(tpr)
 # assign each pattern with the corresponding token names
 top_pattern_list = []
 top_source_list = []
@@ -116,34 +120,37 @@ def combine_and_save_as_json(tokens_list, source_list, store_path, ppv_list, tpr
     number = 1
     for tokens, source, ppv, tpr in zip(tokens_list, source_list, ppv_list, tpr_list):
         id = number + (1 - indicator) * pattern_number
-        data = [{
-            'id': id,
+        data = {
+            # 'id': id,
             "tokens": tokens,
-            "source": source,
-            'positive_predictive_value': ppv,
+            "sources": source,
+            'ppv': ppv,
             'sensitivity': tpr
-        }]
-        with open(store_path + 'pattern_' + str(id) + '.json', 'w', encoding='utf-8') as json_file:
+        }
+        with open(store_path + str(id) + '.json', 'w', encoding='utf-8') as json_file:
             json.dump(data, json_file, ensure_ascii=False, indent=4)
         number += 1
 
 
 
-# 使用函数保存数据
-combine_and_save_as_json(top_pattern_list, top_source_list, store_path,
+# store the extracted tokens as JSON
+combine_and_save_as_json(top_pattern_list, top_source_list, sensitivity_store_path,
                          top_ppv_list, top_tpr_list, 1)
-combine_and_save_as_json(bottom_pattern_list, bottom_source_list, store_path,
+combine_and_save_as_json(bottom_pattern_list, bottom_source_list, sensitivity_store_path,
                          bottom_ppv_list, bottom_tpr_list, 0)
 
-pairs = []
-for i in range(pattern_number):
-    pairs.append({
-        'pair_id': i + 1,
-        'pattern_id': [i + 1, i + 1 + pattern_number],
-    })
-with open(store_path + 'pairs.json', 'w', encoding='utf-8') as json_file:
-    json.dump(pairs, json_file, ensure_ascii=False, indent=4)
 
-subname = "fio2_set_H"
-subname = (subname.replace('fio2', 'inspired_O2_fraction').replace('_H', '_High'))
-print(subname)
+
+
+# pairs = []
+# for i in range(pattern_number):
+#     pairs.append({
+#         'pair_id': i + 1,
+#         'pattern_id': [i + 1, i + 1 + pattern_number],
+#     })
+# with open(store_path + 'pairs.json', 'w', encoding='utf-8') as json_file:
+#     json.dump(pairs, json_file, ensure_ascii=False, indent=4)
+#
+# subname = "fio2_set_H"
+# subname = (subname.replace('fio2', 'inspired_O2_fraction').replace('_H', '_High'))
+# print(subname)
