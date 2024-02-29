@@ -94,6 +94,8 @@ for i in range(pattern_number):
                            replace('PIP', 'peak_inspiratory_pressure').replace('insp_t', 'inspiratory_time')
                            .replace('fio2', 'inspired_O2_fraction'))
                 subname = (subname.replace('_H', '_High').replace('_L', '_Low').replace('age65-', 'age65+'))
+            if pattern[j] >= 736:
+                subname = subname.replace('OTHER', 'Other Races')
                 subname = 'Male' if subname == 'M' else subname
                 subname = 'Female' if subname == 'F' else subname
             names.append(subname)
@@ -124,7 +126,8 @@ def combine_and_save_as_json(tokens_list, source_list, store_path, ppv_list, tpr
             "tokens": tokens,
             "sources": source,
             'ppv': ppv,
-            'sensitivity': tpr
+            'sensitivity': tpr,
+            'type': 'real'
         }
         with open(store_path + str(id) + '.json', 'w', encoding='utf-8') as json_file:
             json.dump(data, json_file, ensure_ascii=False, indent=4)
