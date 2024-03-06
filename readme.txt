@@ -56,7 +56,7 @@ group_name_TokenArray_dict.npy
 A recommended way to load these files is use:
 variable_name = np.load(file_name, allow_pickle=True).item()
 In this way, the variable acquired will be a nested dictionaries. 
-For the outer part, each key represents one patient’s icu_stay id, and the corresponding value is an inner dictionary that contains triggered tokens and timestamps. In an inner dictionary, each key is the duration from the first timestamp to the current timestamp, each value is a list of token ids indicating tokens that are in the state of triggered (note that not all the triggered tokens are necessarily triggered at this time point, some could be 	triggered earlier and then last).
+For the outer part, each key represents one patient’s icu_stay id, and the corresponding value is an inner dictionary that contains triggered tokens and timestamps. In an inner dictionary, each key is the duration from the first timestamp to the current timestamp, each value is a list of token ids indicating tokens that are in the state of triggered (note that not all the triggered tokens are necessarily triggered at this time point, some could be triggered earlier and then last).
 
 
 
