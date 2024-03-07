@@ -29,24 +29,29 @@ with open(superalarm_path + 'FP4EachPattern_' + str(FPR_max) + '.txt', "r") as f
     control_hit = ast.literal_eval(content)
 ppv = list(np.array(case_hit) / (np.array(case_hit) + np.array(control_hit)))
 tpr = list(np.array(case_hit) / test_case_num)
+fpr = list(np.array(control_hit) / test_control_num)
 # filter out the patterns with length > max_len
 index = [index for index, item in enumerate(superalarm) if len(item) <= max_len and len(item) > 1]
 superalarm = [superalarm[i] for i in index]
 ppv = [ppv[i] for i in index]
 tpr = [tpr[i] for i in index]
+fpr = [fpr[i] for i in index]
 print(len(superalarm))
 
 # sort the patterns by ppv
 index = np.argsort(ppv)[::-1]
 superalarm = [superalarm[i] for i in index]
 ppv = [ppv[i] for i in index]
-print(ppv)
 tpr = [tpr[i] for i in index]
 # assign each pattern with the corresponding token names
 top_pattern_list = []
 top_source_list = []
 top_ppv_list = ppv[:pattern_number]
 top_tpr_list = tpr[:pattern_number]
+top_fpr_list = fpr[:pattern_number]
+# print(top_ppv_list)
+# print(top_tpr_list)
+# print(top_fpr_list)
 for i in range(pattern_number):
     pattern = superalarm[i]
     names = []
