@@ -34,23 +34,20 @@ control_sofa['segend'] = pd.to_datetime(control_sofa['segend'])
 control_sofa['endtime'] = pd.to_datetime(control_sofa['endtime'])
 
 
-sofa_thresh = 8
+sofa_thresh = 7
 TP = 0
 for pat in test_case_segs['seg_id']:
-    case_sofa_subset = case_sofa[case_sofa['seg_id']==pat]
+    case_sofa_subset = case_sofa[case_sofa['seg_id'] == pat]
     segstart = case_sofa_subset['segstart'].iloc[-1]
-    segend =case_sofa_subset['segend'].iloc[-1]
-    # case_sofa_subset_sub =case_sofa_subset[
-    #     (case_sofa_subset['endtime']<=(segend+ datetime.timedelta(hours=-2)))
-    #     & (case_sofa_subset['endtime']>=(segstart+ datetime.timedelta(hours=-2)))]
+    segend = case_sofa_subset['segend'].iloc[-1]
     case_sofa_subset_sub =case_sofa_subset[
         (case_sofa_subset['endtime'] <= segend)
         & (case_sofa_subset['endtime'] >= segstart)]
-    if len(case_sofa_subset_sub)!=0:
+    if len(case_sofa_subset_sub) != 0:
             case_sofa_subset_thresh = case_sofa_subset_sub[case_sofa_subset_sub['sofa_24hours']>=sofa_thresh]
-            if len(case_sofa_subset_thresh)!=0:
+            if len(case_sofa_subset_thresh) != 0:
                 TP = TP+1
-print('tpr:',TP/len(test_case_segs))
+print('tpr:', TP/len(test_case_segs))
 FP = 0
 for pat in test_control_segs['seg_id']:
     control_sofa_subset = control_sofa[control_sofa['seg_id']==pat]
@@ -68,8 +65,6 @@ for pat in test_control_segs['seg_id']:
                 FP = FP+1
 print('fpr:', FP / len(test_control_segs))
 PPV = TP / (TP + FP)
-# accuracy
-ACC = (TP + (len(test_control_segs)-FP)) / (len(test_control_segs) + len(test_case_segs))
 # F1 scores
 F1 = 2 * (PPV * TP/len(test_case_segs)) / (PPV + TP/len(test_case_segs))
-print(PPV, ACC, F1, sofa_thresh)
+print(PPV, F1, sofa_thresh)
