@@ -10,7 +10,7 @@ case_test_keys = list(case_test.keys())
 # control_test_keys = list(control_test.keys())
 
 # for case test patients, index = 9, 36, 38, 44, 64 have good raster plots
-index = 9
+index = 38
 case_test_hit = case_test[case_test_keys[index]]['sparseHitArray']
 case_test_time = case_test[case_test_keys[index]]['HitT']
 case_test_dense_hit = case_test_hit.toarray()
