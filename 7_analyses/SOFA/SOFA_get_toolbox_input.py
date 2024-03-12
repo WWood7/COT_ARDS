@@ -35,7 +35,7 @@ def timedelta_to_hour(time):
     total_hours = d + h
     return total_hours
 
-sofa_thresh = 9
+sofa_thresh = 7
 
 
 test_case_array = np.empty((0, 3))
@@ -56,7 +56,7 @@ for pat in test_case_segs['seg_id']:
             temparray = np.array([case_sofa_subset_sub['icustay_id'], 0, 0])
     test_case_array = np.row_stack((test_case_array, temparray))
 
-np.save(SOFA_path + 'SOFA_test_toolbox_input_' + str(sofa_thresh) + '.npy',
+np.save(SOFA_path + 'SOFA_case_toolbox_input_' + str(sofa_thresh) + '.npy',
         test_case_array, allow_pickle=True)
 
 test_control_array = np.empty((0, 3))

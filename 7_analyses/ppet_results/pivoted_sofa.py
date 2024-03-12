@@ -2,12 +2,12 @@ from core import scorers, Process, augmenters, utils, mews, run
 import numpy as np
 from matplotlib import pyplot as plt
 
-path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/tokenarray/'
-FPR_max = 0.25
+path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/SOFA/'
+sofa_thresh = 9
 
 # read in the data
-case = np.load(path + 'case_test_toolbox_input_' + str(FPR_max) + '_sparse.npy', allow_pickle=True)
-control = np.load(path + 'control_test_toolbox_input_' + str(FPR_max) + '_sparse.npy', allow_pickle=True)
+case = np.load(path + 'SOFA_case_toolbox_input_' + str(sofa_thresh) + '.npy', allow_pickle=True)
+control = np.load(path + 'SOFA_control_toolbox_input_' + str(sofa_thresh) + '.npy', allow_pickle=True)
 
 thresh = [1]
 case_scorers = [scorers.PosNeg(tmin=0, tmax=12)]
