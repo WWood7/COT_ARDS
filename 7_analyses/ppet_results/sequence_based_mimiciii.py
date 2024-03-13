@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/XGB_results/mimiciii/'
-FPR_max = 0.25
+FPR_max = 0.4
 
 # read in the data
 case = np.load(path + 'test_case_seq_toolbox_input' + str(FPR_max) + '.npy', allow_pickle=True)
