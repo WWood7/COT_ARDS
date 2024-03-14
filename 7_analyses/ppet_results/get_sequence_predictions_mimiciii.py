@@ -7,7 +7,7 @@ import os
 import ast
 import itertools
 
-FPR_max = 0.25
+FPR_max = 0.2
 def weightingFuncGWAOR(hitArray, deltaT, a, b):
     return hitArray @ gamma.pdf(deltaT, a=a, scale=1 / b)
 

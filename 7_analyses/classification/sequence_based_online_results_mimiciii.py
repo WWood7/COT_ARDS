@@ -10,10 +10,10 @@ def weightingFuncGWAOR(hitArray, deltaT, a, b):
 
 train_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/'
 test_path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/mimiciv/'
-FPR_max = 0.3
-combination_idex = 0
+FPR_max = 0.2
+combination_idex = 9
 alpha = 1
-beta = 2
+beta = 0.6
 
 train_case_data = (
         load_npz(train_path + 'WAOR_files/case_trainData_allFea_GWAOR_' + str(FPR_max) +

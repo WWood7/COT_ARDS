@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 path = '/Users/winnwu/projects/Hu_Lab/COT_project/generate/tokenarray/'
-FPR_max = 0.25
+FPR_max = 0.4
 
 # read in the data
 case = np.load(path + 'case_test_toolbox_input_' + str(FPR_max) + '_sparse.npy', allow_pickle=True)
