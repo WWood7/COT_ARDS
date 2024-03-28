@@ -20,7 +20,6 @@ for i in range(1, 11):
         '/cot/tokens_ppv/' + str(i) + '.json',
         '/cot/tokens_ppv/' + str(i + 10) + '.json',
         ],
-        'reference': '/cot/referenceRanges.json',
         'type': 'ppv_pair'
     }
     with open(pairs_store_path + str(i) + '.json', 'w', encoding='utf-8') as json_file:
@@ -33,7 +32,6 @@ for i in range(11, 21):
         '/cot/tokens_sensitivity/' + str(i - 10) + '.json',
         '/cot/tokens_sensitivity/' + str(i) + '.json',
         ],
-        'reference': '/cot/referenceRanges.json',
         'type': 'sensitivity_pair'
     }
     with open(pairs_store_path + str(i) + '.json', 'w', encoding='utf-8') as json_file:
